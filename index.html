@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" >
+    <link rel="stylesheet" href="style.css">
+    <title>snake game - Shahar B.E</title>
+  </head>
+  <body>
+    <h1>Snake Game</h1>
+    <div class="container">
+      <!-- grid -->
+      <canvas id="game">
+        <p id="score" 0></p>
+      </canvas>
+      <br />
+      <!-- Score -->
+        <span>Score: <span id="score1"></span></span>  
+        <br />
+        <span>Best Score for Today: <span id="bestScore"></span></span>
+        <br />
+        <!-- Dropdown for difficulty -->
+        <span>Select Difficulty:</span>
+        <select id="difficultySelect" onchange="onDifficultyChange()">
+          <option value="easy">Easy</option>
+          <option value="medium" selected>Medium</option>
+          <option value="hard">Hard</option>
+        </select>
+        <br />
+      <!-- Walls Change -->
+      <span>Select Wall Option:</span>
+      <select id="wallsSelect" onchange="onWallsChange()">
+        <option value="withoutWalls" selected>Without Walls</option>
+        <option value="withWalls">With Walls</option>     
+      </select>
+      <br />
+
+      <!-- Rules  -->
+      <button onclick="showRules()">📖 Game Rules</button>
+
+      <div id="rulesModal" class="modal hidden">
+        <div class="modal-content">
+          <span class="close-button" onclick="hideRules()">✖</span>
+          <h2>Game Rules</h2>
+          <p>Use the arrow keys to move the snake.</p>
+          <p>Eat the red squares (apples) to grow.</p>
+          <p>Avoid colliding with yourself.</p>
+          <h3>Points per apple - Without Walls:</h3>
+          <ul>
+            <li>Easy: 1 point </li>
+            <li>Medium: 3 points</li>
+            <li>Hard: 5 points</li>
+          </ul>
+            <h3>Points per apple - With Walls:</h3>
+          <ul>
+            <li>Easy: 3 point </li>
+            <li>Medium: 6 points</li>
+            <li>Hard: 10 points</li>
+          </ul>
+          <h3>Made by - Shahar Ben Ezra</h3>
+         </div>
+         
+      </div>
+      <br />
+      <!-- Start Button -->
+      <button id="startButton" onclick="startGame()">Start Game</button>
+      <br />
+      <!-- Pop massage -->
+      <div id="message" class="hidden">Game reset due to difficulty change</div>
+
+      <!-- Game over massage -->
+      <div id="gameOverModal" class="modal hidden">
+        <div class="modal-content">
+          <span class="close-button" onclick="hideGameOver()">✖</span>
+          <h2>Game Over</h2>
+          <p>Your final score: <span id="finalScore"></span> points </p>
+          <button onclick="startGame(); hideGameOver();">Try Again</button>
+        </div>
+      </div>
+    </div>
+    </div>
+  </body>
+  <script src="script.js"></script>
+</html>
