@@ -1,10 +1,8 @@
 const canvas = document.getElementById("game");
 const ctx = canvas.getContext("2d");
 
-const grid = 20;
-canvas.width = canvas.clientWidth;
-canvas.height = canvas.clientHeight;
-
+const grid = 20; // הגודל של כל ריבוע בגריד
+let rows, columns; // מספר השורות והעמודות
 let score = 0;
 let snake = [{ x: 10, y: 10 }];
 let goX = 0, goY = 0;
@@ -94,11 +92,9 @@ document.addEventListener("touchmove", (ev) => {
   }
 
   window.addEventListener("resize", () => {
-    canvas.width = canvas.clientWidth;
-    canvas.height = canvas.clientHeight;
+    resizeCanvas();
     draw();
   });
-
 
   touchStartX = touch.pageX;
   touchStartY = touch.pageY;
@@ -106,12 +102,26 @@ document.addEventListener("touchmove", (ev) => {
   ev.preventDefault();
 });
 
+function resizeCanvas() {
+  canvas.width = canvas.clientWidth;
+  canvas.height = canvas.clientHeight;
+
+  rows = Math.floor(canvas.height / grid); // מספר השורות על פי גובה ה-canvas
+  columns = Math.floor(canvas.width / grid); // מספר העמודות על פי רוחב ה-canvas
+
+  // מיקום האוכל יתעדכן בהתאם לגודל החדש
+  food = {
+    x: Math.floor(Math.random() * columns),
+    y: Math.floor(Math.random() * rows)
+  };
+}
+
 function startGame() {
   score = 0;
   snake = [{ x: 10, y: 10 }];
-  goX = 0; // איפוס כיוון התנועה בהתחלה
+  goX = 0;
   goY = 0;
-  lastDirection = { x: 0, y: 0 }; // איפוס הכיוון האחרון
+  lastDirection = { x: 0, y: 0 };
   food = {
     x: Math.floor(Math.random() * grid),
     y: Math.floor(Math.random() * grid)
@@ -144,16 +154,16 @@ function gameLoop() {
 
   if (withWalls) {
     // בדיקה מדויקת יותר לגבולות
-    if (head.x < 0 || head.x >= grid || head.y < 0 || head.y >= grid) {
+    if (head.x < 0 || head.x >= columns || head.y < 0 || head.y >= rows) {
       showGameOver();
       return;
     }
   } else {
     // המשך הלולאה מהצד השני של המסך
-    if (head.x < 0) head.x = grid - 1;
-    if (head.x >= grid) head.x = 0;
-    if (head.y < 0) head.y = grid - 1;
-    if (head.y >= grid) head.y = 0;
+    if (head.x < 0) head.x = columns - 1;
+    if (head.x >= columns) head.x = 0;
+    if (head.y < 0) head.y = rows - 1;
+    if (head.y >= rows) head.y = 0;
   }
 
   if (snake.some((part) => part.x === head.x && part.y === head.y)) {
@@ -164,8 +174,8 @@ function gameLoop() {
     if (head.x === food.x && head.y === food.y) {
       score += pointsPerApple;
       food = {
-        x: Math.floor(Math.random() * grid),
-        y: Math.floor(Math.random() * grid)
+        x: Math.floor(Math.random() * columns),
+        y: Math.floor(Math.random() * rows)
       };
       foodSound.play();
     } else {
@@ -189,7 +199,6 @@ function draw() {
     }
     ctx.fillRect(part.x * grid, part.y * grid, grid - 2, grid - 2);
   }
-
 
   ctx.fillStyle = "red";
   ctx.fillRect(food.x * grid, food.y * grid, grid - 2, grid - 2);
@@ -266,3 +275,5 @@ function toggleSettings() {
   settingsModal.classList.toggle('hidden');
   settingsModal.classList.toggle('visible');
 }
+
+resizeCanvas();  // Make sure to initialize the grid size on load
