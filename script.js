@@ -1,16 +1,12 @@
 const canvas = document.getElementById("game");
-
 const ctx = canvas.getContext("2d");
 
 const grid = 20;
 canvas.width = canvas.clientWidth;
 canvas.height = canvas.clientHeight;
 
-
-
-
 let score = 0;
-let snake = [{ x: 1, y: 10 }];
+let snake = [{ x: 10, y: 10 }];
 let goX = 0, goY = 0;
 let lastDirection = { x: 0, y: 0 };
 
@@ -19,9 +15,8 @@ let food = {
   y: Math.floor(Math.random() * grid)
 };
 
-let bestScore = 0; 
+let bestScore = 0;
 let pointsPerApple = 3;
-
 
 const foodSound = new Audio('food.mp3');
 const moveSound = new Audio('move.mp3');
@@ -29,7 +24,7 @@ const gameOverSound = new Audio('gameover.mp3');
 const backgroundMusic = new Audio('background.mp3');
 
 const appleImage = new Image();
-appleImage.src = 'apple.jpg'; 
+appleImage.src = 'apple.jpg';
 
 backgroundMusic.loop = true;
 gameOverSound.loop = false;
@@ -103,20 +98,23 @@ document.addEventListener("touchmove", (ev) => {
     canvas.height = canvas.clientHeight;
     draw();
   });
-  
 
-  touchStartX = touch.pageX; 
+
+  touchStartX = touch.pageX;
   touchStartY = touch.pageY;
 
-  ev.preventDefault(); 
+  ev.preventDefault();
 });
 
 function startGame() {
   score = 0;
   snake = [{ x: 10, y: 10 }];
+  goX = 0; // איפוס כיוון התנועה בהתחלה
+  goY = 0;
+  lastDirection = { x: 0, y: 0 }; // איפוס הכיוון האחרון
   food = {
-    x: Math.floor(Math.random() * 20),
-    y: Math.floor(Math.random() * 20)
+    x: Math.floor(Math.random() * grid),
+    y: Math.floor(Math.random() * grid)
   };
   document.getElementById("score1").textContent = score;
 
@@ -132,8 +130,8 @@ let withWalls = false;
 function onWallsChange() {
   const wallOption = document.getElementById("wallsSelect").value;
   withWalls = wallOption === "withWalls";
-  showMessage("Game reset due to wall option change");  
-  startGame();  
+  showMessage("Game reset due to wall option change");
+  startGame();
 }
 
 function gameLoop() {
@@ -145,11 +143,13 @@ function gameLoop() {
   };
 
   if (withWalls) {
+    // בדיקה מדויקת יותר לגבולות
     if (head.x < 0 || head.x >= grid || head.y < 0 || head.y >= grid) {
       showGameOver();
       return;
     }
   } else {
+    // המשך הלולאה מהצד השני של המסך
     if (head.x < 0) head.x = grid - 1;
     if (head.x >= grid) head.x = 0;
     if (head.y < 0) head.y = grid - 1;
@@ -189,7 +189,7 @@ function draw() {
     }
     ctx.fillRect(part.x * grid, part.y * grid, grid - 2, grid - 2);
   }
-  
+
 
   ctx.fillStyle = "red";
   ctx.fillRect(food.x * grid, food.y * grid, grid - 2, grid - 2);
@@ -246,14 +246,14 @@ function showGameOver() {
   backgroundMusic.pause();
   backgroundMusic.currentTime = 0;
   gameOverSound.play();
-  
+
   if (score > bestScore) {
     bestScore = score;
   }
 
   document.getElementById("finalScore").textContent = score;
-  document.getElementById("bestScore").textContent = bestScore; 
-  
+  document.getElementById("bestScore").textContent = bestScore;
+
   document.getElementById("gameOverModal").classList.remove("hidden");
 }
 
