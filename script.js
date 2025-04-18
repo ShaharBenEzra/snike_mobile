@@ -1,12 +1,18 @@
 const canvas = document.getElementById("game");
-canvas.width = canvas.clientWidth;
-canvas.height = canvas.clientHeight;
+
 const ctx = canvas.getContext("2d");
 
 const grid = 20;
+canvas.width = canvas.clientWidth;
+canvas.height = canvas.clientHeight;
+
+
+
+
 let score = 0;
 let snake = [{ x: 1, y: 10 }];
 let goX = 0, goY = 0;
+let lastDirection = { x: 0, y: 0 };
 
 let food = {
   x: Math.floor(Math.random() * grid),
@@ -15,7 +21,6 @@ let food = {
 
 let bestScore = 0; 
 let pointsPerApple = 3;
-let lastDirection = { x: 0, y: 0 };
 
 
 const foodSound = new Audio('food.mp3');
@@ -254,4 +259,10 @@ function showGameOver() {
 
 function hideGameOver() {
   document.getElementById("gameOverModal").classList.add("hidden");
+}
+
+function toggleSettings() {
+  const settingsModal = document.getElementById('settingsModal');
+  settingsModal.classList.toggle('hidden');
+  settingsModal.classList.toggle('visible');
 }
