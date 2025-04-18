@@ -7,37 +7,16 @@
     <title>snake game - Shahar B.E</title>
   </head>
   <body>
-    <h1>Snake Game</h1>
     <div class="container">
+      <h1>Snake Game</h1>
       <!-- grid -->
       <canvas id="game">
         <p id="score" 0></p>
       </canvas>
-      <br />
-      <!-- Score -->
-        <span>Score: <span id="score1"></span></span>  
-        <br />
-        <span>Best Score for Today: <span id="bestScore"></span></span>
-        <br />
-        <!-- Dropdown for difficulty -->
-        <span>Select Difficulty:</span>
-        <select id="difficultySelect" onchange="onDifficultyChange()">
-          <option value="easy">Easy</option>
-          <option value="medium" selected>Medium</option>
-          <option value="hard">Hard</option>
-        </select>
-        <br />
-      <!-- Walls Change -->
-      <span>Select Wall Option:</span>
-      <select id="wallsSelect" onchange="onWallsChange()">
-        <option value="withoutWalls" selected>Without Walls</option>
-        <option value="withWalls">With Walls</option>     
-      </select>
-      <br />
-
+      <!-- Start Button -->
+      <button id="startButton" onclick="startGame()">Start Game</button>
       <!-- Rules  -->
-      <button onclick="showRules()">📖 Game Rules</button>
-
+      <button onclick="showRules()">📖  Rules</button>
       <div id="rulesModal" class="modal hidden">
         <div class="modal-content">
           <span class="close-button" onclick="hideRules()">✖</span>
@@ -59,12 +38,33 @@
           </ul>
           <h3>Made by - Shahar Ben Ezra</h3>
          </div>
-         
       </div>
-      <br />
-      <!-- Start Button -->
-      <button id="startButton" onclick="startGame()">Start Game</button>
-      <br />
+      <button id="settingsBtn" onclick="toggleSettings()">⚙️</button>
+      <!-- Settings Modal -->
+      <div id="settingsModal" class="modal hidden">
+        <div class="modal-content">
+          <span class="close-button" onclick="toggleSettings()">✖</span>
+          <h3>Game Settings</h3>
+          <label for="difficultySelect">Select Difficulty:</label>
+          <select id="difficultySelect" onchange="onDifficultyChange()">
+            <option value="easy">Easy</option>
+            <option value="medium" selected>Medium</option>
+            <option value="hard">Hard</option>
+          </select>
+          <br /><br />
+          <label for="wallsSelect">Select Wall Option:</label>
+          <select id="wallsSelect" onchange="onWallsChange()">
+            <option value="withoutWalls" selected>Without Walls</option>
+            <option value="withWalls">With Walls</option>
+          </select>
+        </div>
+      </div>
+      <!-- Score -->
+        <span>Score: <span id="score1"></span></span>  
+        <br />
+        <span>Best Score for Today: <span id="bestScore"></span></span>
+        <br />
+
       <!-- Pop massage -->
       <div id="message" class="hidden">Game reset due to difficulty change</div>
 
