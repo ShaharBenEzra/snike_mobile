@@ -95,7 +95,7 @@ document.addEventListener("touchmove", (ev) => {
 });
 
 function generateFood() {
-  const range = 10;
+  const range = 8;
   const centerX = Math.floor(columns / 2);
   const centerY = Math.floor(rows / 2);
   return {
