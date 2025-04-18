@@ -1,18 +1,14 @@
 const canvas = document.getElementById("game");
 const ctx = canvas.getContext("2d");
 
-const grid = 20; // הגודל של כל ריבוע בגריד
-let rows, columns; // מספר השורות והעמודות
+const grid = 20;
+let rows, columns;
 let score = 0;
 let snake = [{ x: 10, y: 10 }];
 let goX = 0, goY = 0;
 let lastDirection = { x: 0, y: 0 };
 
-let food = {
-  x: Math.floor(Math.random() * grid),
-  y: Math.floor(Math.random() * grid)
-};
-
+let food = { x: 0, y: 0 };
 let bestScore = 0;
 let pointsPerApple = 3;
 
@@ -26,7 +22,6 @@ appleImage.src = 'apple.jpg';
 
 backgroundMusic.loop = true;
 gameOverSound.loop = false;
-
 backgroundMusic.volume = 0.3;
 
 document.addEventListener("keydown", (ev) => {
@@ -52,7 +47,6 @@ document.addEventListener("keydown", (ev) => {
   }
 });
 
-// הגדרת משתנים למגע
 let touchStartX = 0;
 let touchStartY = 0;
 
@@ -63,28 +57,27 @@ document.addEventListener("touchstart", (ev) => {
 });
 
 document.addEventListener("touchmove", (ev) => {
-  if (ev.touches.length > 1) return; // רק מגע אחד
-
+  if (ev.touches.length > 1) return;
   const touch = ev.touches[0];
   const diffX = touch.pageX - touchStartX;
   const diffY = touch.pageY - touchStartY;
 
   if (Math.abs(diffX) > Math.abs(diffY)) {
-    if (diffX > 0 && lastDirection.x !== -1) { // ימינה
+    if (diffX > 0 && lastDirection.x !== -1) {
       goX = 1; goY = 0;
       lastDirection = { x: 1, y: 0 };
       moveSound.cloneNode().play();
-    } else if (diffX < 0 && lastDirection.x !== 1) { // שמאלה
+    } else if (diffX < 0 && lastDirection.x !== 1) {
       goX = -1; goY = 0;
       lastDirection = { x: -1, y: 0 };
       moveSound.cloneNode().play();
     }
   } else {
-    if (diffY > 0 && lastDirection.y !== -1) { // למטה
+    if (diffY > 0 && lastDirection.y !== -1) {
       goX = 0; goY = 1;
       lastDirection = { x: 0, y: 1 };
       moveSound.cloneNode().play();
-    } else if (diffY < 0 && lastDirection.y !== 1) { // למעלה
+    } else if (diffY < 0 && lastDirection.y !== 1) {
       goX = 0; goY = -1;
       lastDirection = { x: 0, y: -1 };
       moveSound.cloneNode().play();
@@ -98,22 +91,25 @@ document.addEventListener("touchmove", (ev) => {
 
   touchStartX = touch.pageX;
   touchStartY = touch.pageY;
-
   ev.preventDefault();
 });
+
+function generateFood() {
+  const range = 10;
+  const centerX = Math.floor(columns / 2);
+  const centerY = Math.floor(rows / 2);
+  return {
+    x: Math.floor(Math.random() * (range * 2 + 1)) + (centerX - range),
+    y: Math.floor(Math.random() * (range * 2 + 1)) + (centerY - range)
+  };
+}
 
 function resizeCanvas() {
   canvas.width = canvas.clientWidth;
   canvas.height = canvas.clientHeight;
-
-  rows = Math.floor(canvas.height / grid); // מספר השורות על פי גובה ה-canvas
-  columns = Math.floor(canvas.width / grid); // מספר העמודות על פי רוחב ה-canvas
-
-  // מיקום האוכל יתעדכן בהתאם לגודל החדש
-  food = {
-    x: Math.floor(Math.random() * columns),
-    y: Math.floor(Math.random() * rows)
-  };
+  rows = Math.floor(canvas.height / grid);
+  columns = Math.floor(canvas.width / grid);
+  food = generateFood();
 }
 
 function startGame() {
@@ -122,15 +118,10 @@ function startGame() {
   goX = 0;
   goY = 0;
   lastDirection = { x: 0, y: 0 };
-  food = {
-    x: Math.floor(Math.random() * grid),
-    y: Math.floor(Math.random() * grid)
-  };
+  food = generateFood();
   document.getElementById("score1").textContent = score;
-
   backgroundMusic.currentTime = 0;
   backgroundMusic.play();
-
   const difficulty = document.getElementById("difficultySelect").value;
   setDifficulty(difficulty);
 }
@@ -146,20 +137,17 @@ function onWallsChange() {
 
 function gameLoop() {
   if (goX === 0 && goY === 0) return;
-
   const head = {
     x: snake[0].x + goX,
     y: snake[0].y + goY
   };
 
   if (withWalls) {
-    // בדיקה מדויקת יותר לגבולות
     if (head.x < 0 || head.x >= columns || head.y < 0 || head.y >= rows) {
       showGameOver();
       return;
     }
   } else {
-    // המשך הלולאה מהצד השני של המסך
     if (head.x < 0) head.x = columns - 1;
     if (head.x >= columns) head.x = 0;
     if (head.y < 0) head.y = rows - 1;
@@ -173,10 +161,7 @@ function gameLoop() {
     snake.unshift(head);
     if (head.x === food.x && head.y === food.y) {
       score += pointsPerApple;
-      food = {
-        x: Math.floor(Math.random() * columns),
-        y: Math.floor(Math.random() * rows)
-      };
+      food = generateFood();
       foodSound.play();
     } else {
       snake.pop();
@@ -192,11 +177,7 @@ function draw() {
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
   for (const part of snake) {
-    if (part === snake[0]) {
-      ctx.fillStyle = "lime";
-    } else {
-      ctx.fillStyle = "#006400";
-    }
+    ctx.fillStyle = part === snake[0] ? "lime" : "#006400";
     ctx.fillRect(part.x * grid, part.y * grid, grid - 2, grid - 2);
   }
 
@@ -218,10 +199,8 @@ function onDifficultyChange() {
 
 function setDifficulty(difficulty) {
   if (gameInterval) clearInterval(gameInterval);
-
   const wallKey = withWalls ? "withWalls" : "withoutWalls";
   pointsPerApple = pointsMap[wallKey][difficulty];
-
   switch (difficulty) {
     case "easy": gameInterval = setInterval(gameLoop, 300); break;
     case "medium": gameInterval = setInterval(gameLoop, 150); break;
@@ -236,7 +215,6 @@ function showMessage(text) {
   msg.textContent = text;
   msg.classList.remove("hidden");
   msg.classList.add("visible");
-
   setTimeout(() => {
     msg.classList.remove("visible");
     msg.classList.add("hidden");
@@ -255,14 +233,9 @@ function showGameOver() {
   backgroundMusic.pause();
   backgroundMusic.currentTime = 0;
   gameOverSound.play();
-
-  if (score > bestScore) {
-    bestScore = score;
-  }
-
+  if (score > bestScore) bestScore = score;
   document.getElementById("finalScore").textContent = score;
   document.getElementById("bestScore").textContent = bestScore;
-
   document.getElementById("gameOverModal").classList.remove("hidden");
 }
 
@@ -276,4 +249,4 @@ function toggleSettings() {
   settingsModal.classList.toggle('visible');
 }
 
-resizeCanvas();  // Make sure to initialize the grid size on load
+resizeCanvas();
